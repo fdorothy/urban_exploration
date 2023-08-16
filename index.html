@@ -1,0 +1,32 @@
+<meta charset="utf-8">
+
+<!-- Main Menu -->
+<div id="main-menu">
+  <label>Volume</label>
+  <input type="range" id="volume-control" onchange="updateVolume(this.value)">
+</div>
+
+<!-- Game content -->
+<div id="output"></div>
+
+<!-- Player input -->
+<div class="input">
+  <span class="ml-2">> </span><input id="input" autofocus spellcheck="false">
+</div>
+
+<!-- CSS styles -->
+<link id="styles" rel="stylesheet" type="text/css" href="styles/retro.css">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@700&family=Work+Sans&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.js" integrity="sha512-dMiBqqEV5i3KqpAdsgQSSZ72DnNib7otY0X+b/Tnn1EmLym1dxuZ19csdZqBnfDniKd9bmNtzStQzuMrIa5Ngw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- Include game engine -->
+<script src="index.js"></script>
+
+<!-- Include game data ('disk') -->
+<script src="game-disks/new-disk-template.js"></script>
+
+<!-- Load disk into engine -->
+<script>loadDisk(newDiskTemplate);</script>
