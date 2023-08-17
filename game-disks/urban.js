@@ -1,10 +1,21 @@
 const urbanDisk = () => ({
-
-  /**
-   *  ACT 1 - APARTMENT 
-   */
-  roomId: 'bathroom', // Set this to the ID of the room you want the player to start in.
+  roomId: 'introduction',
   rooms: [
+    /**
+     *  ACT 0 - Introduction / Tutorial
+     */
+    {
+      id: 'introduction',
+      name: 'Introduction',
+      desc: `The sun sets, filling the apartment with a full display of vibrant reds and oranges. As you sit in your apartment, you think over tonight's mission: explore the old abandoned nuclear power plant, and take a picture of the reactor. You need to find your car keys and camera before driving over there.\n\nNew to text adventures? Type HELP to see a list of commands. Type GO START to continue`,
+      exits: [
+        { dir: 'start', id: 'bathroom' },
+      ]
+    },
+
+    /**
+     *  ACT 1 - APARTMENT 
+     */
     {
       id: 'bathroom',
       name: 'Bathroom',
@@ -58,19 +69,17 @@ const urbanDisk = () => ({
         {
           name: 'bookshelf',
           desc: 'A tall bookshelf, with many books and other objects.',
-          onLook: () => {
-            const item = getItemInRoom('camera', disk.roomId)
-            if (item && item.isHidden) {
-              println('You find your CAMERA sitting on one of the shelves.')
-              item.isHidden = false
-            }
-          }
+          onLook: () => unhideItem('camera', 'You find your CAMERA sitting on one of the shelves.'),
         },
         {
           name: 'camera',
-          desc: 'A polaroid camera with enough film to last a while',
+          desc: 'A polaroid camera with enough film to last a while. Type USE CAMERA to take a picture.',
           isHidden: true,
           isTakeable: true
+        },
+        {
+          name: 'tv',
+          desc: `The TV is in the middle of a news clip.\n"...a missing girl from Birmingham. She was last seen on Friday night, near the bar Saturn in Avondale. She is eleven and is considered at risk. Now for the weather..."`
         }
       ],
       exits: [
