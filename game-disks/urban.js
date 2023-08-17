@@ -1,10 +1,14 @@
 const urbanDisk = () => ({
+
+  /**
+   *  ACT 1 - APARTMENT 
+   */
   roomId: 'bathroom', // Set this to the ID of the room you want the player to start in.
   rooms: [
     {
       id: 'bathroom',
       name: 'Bathroom',
-      desc: `There's a door to the NORTH.\nTutorial: Type GO NORTH to leave the bathroom.\nTutorial: Type ITEMS to see a list of items in the room.`,
+      desc: `You stand in your apartments only bathroom. There's a TOILET in here, as well as a can of LYSOL. There's a door to the NORTH.`,
       music: '',
       onLook: () => {
         if (getRoom('bathroom').smelly) {
@@ -21,48 +25,105 @@ const urbanDisk = () => ({
           name: 'toilet',
           desc: `The only TOILET in your 2 bedroom apartment.`,
           onUse: () => {
-            println(`You use the toilet and flush it afterwards. The room is now smelly.`)
-            getRoom('bathroom').smelly = true
+            println(`You use the toilet and flush. The room is now smelly.`)
+            getRoom(disk.roomId).smelly = true
+          }
+        },
+        {
+          name: 'lysol',
+          desc: `A can of lysol spray. According to the label, it has a citrus meadow aroma. USE it to freshen up the air.`,
+          isTakeable: true,
+          onUse: () => {
+            println(`You spray the air with lysol, filling it with a citrus meadow aroma.`)
+            getRoom(disk.roomId).smelly = false
           }
         }
       ],
       exits: [
-        {
-          dir: 'north',
-          id: 'living_room',
-        },
+        { dir: 'north', id: 'living_room' },
       ],
     },
     {
       id: 'living_room',
       name: 'Living Room',
-      desc: `The living room is sparsely furnished. WALTER sits on a couch across from the TV. To the SOUTH is the bathroom. To the NORTH is the kitchen. To the EAST is the garage.`,
+      desc: `The living room is sparsely furnished. WALTER sits on a couch across from the TV. A BOOKSHELF is up against a wall. To the SOUTH is the bathroom. To the NORTH is the kitchen. To the EAST is the garage.`,
       music: '',
+      onLook: () => {
+        const item = getItemInRoom('camera', disk.roomId)
+        if (item && !item.isHidden) {
+          println('Your CAMERA sits on the bookshelf')
+        }
+      },
+      items: [
+        {
+          name: 'bookshelf',
+          desc: 'A tall bookshelf, with many books and other objects.',
+          onLook: () => {
+            const item = getItemInRoom('camera', disk.roomId)
+            if (item && item.isHidden) {
+              println('You find your CAMERA sitting on one of the shelves.')
+              item.isHidden = false
+            }
+          }
+        },
+        {
+          name: 'camera',
+          desc: 'A polaroid camera with enough film to last a while',
+          isHidden: true,
+          isTakeable: true
+        }
+      ],
       exits: [
-        {
-          dir: 'south',
-          id: 'bathroom',
-        },
-        {
-          dir: 'east',
-          id: 'garage',
-        },
-        {
-          dir: 'north',
-          id: 'kitchen',
-        },
+        { dir: 'south', id: 'bathroom' },
+        { dir: 'east', id: 'garage' },
+        { dir: 'north', id: 'kitchen' },
       ],
     },
     {
       id: 'kitchen',
       name: 'Kitchen',
       desc: `There is a pile of dirty dishes in the SINK. You think you see a cockroach scurry into the CABINETS as the light turned on. The sound of your tv plays to the SOUTH.`,
+      smelly: true,
+      onLook: () => {
+        const item = getItemInRoom('keys', disk.roomId)
+        if (item && !item.isHidden) {
+          println('Your KEYS are on the countertop.')
+        }
+        if (getRoom(disk.roomId).smelly)
+          println('Rotten food in the sink stinks in this room')
+      },
       music: '',
-      exits: [
+      items: [
         {
-          dir: 'south',
-          id: 'living_room',
+          name: 'cabinets',
+          desc: 'Typical kitchen cabinets.',
+          onLook: () => unhideItem('keys', 'You find your car KEYS in the cabinets.')
         },
+        {
+          name: 'keys',
+          desc: 'Keys to your car',
+          isHidden: true,
+          isTakeable: true
+        },
+        {
+          name: 'sink',
+          desc: 'The kitchen sink is full of dirty dishes. There is an odor from the rotting food.',
+          onLook: () => {
+            if (!getRoom(disk.roomId).smelly)
+              unhideItem('knife', 'You find a KNIFE at the bottom of the dirty dishes')
+            else
+              println("The sink smells so bad you don't want to reach into it")
+          }
+        },
+        {
+          name: 'knife',
+          desc: 'A sharp knife',
+          isHidden: true,
+          isTakeable: true
+        }
+      ],
+      exits: [
+        { dir: 'south', id: 'living_room' },
       ],
     },
     {
@@ -71,11 +132,41 @@ const urbanDisk = () => ({
       desc: `The sound of cars speeding by on the highway outside echoes through the parking garage. Your CAR is a few rows down on the right. Your apartment is to the WEST`,
       music: '',
       exits: [
-        {
-          dir: 'west',
-          id: 'living_room',
-        },
+        { dir: 'west', id: 'living_room' },
       ],
     }
   ],
+  characters: [
+    {
+      name: ['walter', 'roommate'],
+      roomId: 'living_room',
+      desc: 'Walter looks zoned out watching the TV.',
+      onTalk: () => println("Hey man, weren't you going to scope out that abandoned nuclear power plant?"),
+      topics: [
+        {
+          option: "What's on **TV**?",
+          removeOnRead: true,
+          line: `"Just the news. Something about a missing child in the area."`
+        },
+        {
+          option: "Where's my **CAMERA**?",
+          removeOnRead: true,
+          line: `"Look around, it's in the living room somewhere."`
+        },
+        {
+          option: "Where are my **KEYS**?",
+          removeOnRead: true,
+          line: `"Don't you usually put them in the kitchen cabinets?"`
+        }
+      ]
+    },
+  ],
 });
+
+const unhideItem = (itemId, desc) => {
+  const item = getItemInRoom(itemId, disk.roomId)
+  if (item && item.isHidden) {
+    println(desc)
+    item.isHidden = false
+  }
+}

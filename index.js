@@ -225,13 +225,13 @@ let img = (name) => {
 let look = () => {
   const room = getRoom(disk.roomId);
 
-  if (typeof room.onLook === 'function') {
-    room.onLook({disk, println});
-  }
-
   img(room.img)
 
   println(room.desc)
+
+  if (typeof room.onLook === 'function') {
+    room.onLook({disk, println});
+  }
 };
 
 // look in the passed way
@@ -473,7 +473,7 @@ let talkToOrAboutX = (preposition, x) => {
       if (response === 'nothing') {
         endConversation();
         println(`You end the conversation.`);
-      } else if (disk.conversation && disk.conversation[response]) {
+      } else if (disk.conversation && disk.conversation[response] && disk.conversation[response].onSelected) {
         disk.conversation[response].onSelected();
       } else {
         const topic = disk.conversation.length && conversationIncludesTopic(disk.conversation, response);
@@ -991,9 +991,13 @@ let enterRoom = (id) => {
     println(room.desc);
   }
 
-  room.visits++;
-
   disk.roomId = id;
+
+  if (typeof room.onLook === 'function') {
+    room.onLook({disk, println, getRoom, enterRoom});
+  }
+
+  room.visits++;
 
   if (typeof room.onEnter === 'function') {
     room.onEnter({disk, println, getRoom, enterRoom});
