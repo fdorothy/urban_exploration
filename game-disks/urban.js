@@ -1,5 +1,7 @@
 const urbanDisk = () => ({
+  //roomId: 'introduction',
   roomId: 'introduction',
+
   rooms: [
     /**
      *  ACT 0 - Introduction / Tutorial
@@ -140,10 +142,126 @@ const urbanDisk = () => ({
       name: 'Garage',
       desc: `The sound of cars speeding by on the highway outside echoes through the parking garage. Your CAR is a few rows down on the right. Your apartment is to the WEST`,
       music: '',
+      items: [
+        {
+          id: 'car',
+          name: 'Car',
+          desc: `Your beat up old car.`,
+          onUse: () => {
+            println('You drive to the abandoned nuclear power plant...\n\n')
+            enterRoom('outside_fence')
+          }
+        }
+      ],
       exits: [
         { dir: 'west', id: 'living_room' },
       ],
-    }
+    },
+
+
+    /**
+     *  ACT 2 - Outside Power Plant
+     */
+    {
+      id: 'outside_fence',
+      name: 'Outside the Fence',
+      desc: `You stand outside the fence of the abandoned nuclear power plant. You can see the cooling tower against the night sky.`,
+      exits: [
+        { dir: 'north', id: 'homeless_camp' },
+        { dir: 'east', id: 'parking_lot'}//, block: `You cannot scale the barbed wire fence` },
+      ],
+    },
+    {
+      id: 'homeless_camp',
+      name: 'Homeless Camp',
+      desc: `You are standing in a homeless camp. There is a homeless MAN looking at you from the opposite side of a small fire.`,
+      exits: [
+        { dir: 'south', id: 'outside_fence' },
+        { dir: 'north', id: 'forest' },
+      ],
+    },
+    {
+      id: 'forest',
+      name: 'The Forest',
+      desc: `You are lost in the forest. Which way did you come from?`,
+      exits: [
+        { dir: 'north', id: 'forest' },
+        { dir: 'east', id: 'forest' },
+        { dir: 'south', id: 'homeless_camp' },
+        { dir: 'west', id: 'forest' },
+      ]
+    },
+    {
+      id: 'parking_lot',
+      name: 'Parking Lot',
+      desc: `You are in the parking lot of the nuclear power plant. There are a few broken down cars here, their owners long gone.`,
+      exits: [
+        { dir: 'west', id: 'outside_fence' },
+        { dir: 'east', id: 'containment' },
+        { dir: 'south', id: 'river' },
+        { dir: 'north', id: 'security_office' },
+      ],
+    },
+    {
+      id: 'river',
+      name: 'River',
+      desc: `You stand on the banks of a wide river. The water here is warm. A channel of water flows towards the power plant.`,
+      exits: [
+        { dir: 'north', id: 'intake_structure' },
+        { dir: 'west', id: 'parking_lot' }
+      ],
+    },
+
+
+    /**
+     * ACT 3 - Inside power plant
+     */
+    {
+      id: 'containment',
+      name: 'Containment Structure',
+      desc: `You are in the containment structure. A blueish glow can be seen from DOWN below.`,
+      exits: [
+        { dir: 'west', id: 'parking_lot' },
+        { dir: 'south', id: 'utility_tunnel' },
+        { dir: 'down', id: 'reactor' },
+      ],
+    },
+    {
+      id: 'intake_structure',
+      name: 'Intake Structure',
+      desc: `You are in the water intake structure of the nuclear power plant.`,
+      exits: [
+        { dir: 'north', id: 'utility_tunnel' },
+        { dir: 'south', id: 'river' }
+      ],
+    },
+    {
+      id: 'security_office',
+      name: 'Security Office',
+      desc: `You are in the main security office for the power plant.`,
+      exits: [
+        { dir: 'east', id: 'utility_tunnel' },
+        { dir: 'south', id: 'parking_lot' }
+      ],
+    },
+    {
+      id: 'reactor',
+      name: 'Reactor Core',
+      desc: `You are just above the reactor core pool.`,
+      exits: [
+        { dir: 'up', id: 'containment' },
+      ],
+    },
+    {
+      id: 'utility_tunnel',
+      name: 'Utility Tunnel',
+      desc: `You are in a utility tunnel.`,
+      exits: [
+        { dir: 'north', id: 'containment' },
+        { dir: 'south', id: 'intake_structure' },
+        { dir: 'east', id: 'security_office' },
+      ],
+    },
   ],
   characters: [
     {
