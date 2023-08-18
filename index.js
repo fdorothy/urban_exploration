@@ -232,6 +232,9 @@ let look = () => {
   if (typeof room.onLook === 'function') {
     room.onLook({disk, println});
   }
+
+  if (room.items && room.items.length > 0)
+    items()
 };
 
 // look in the passed way
@@ -987,15 +990,10 @@ let enterRoom = (id) => {
 
   img(room.img)
 
-  if (room.visits === 0) {
-    println(room.desc);
-  }
-
   disk.roomId = id;
 
-  if (typeof room.onLook === 'function') {
-    room.onLook({disk, println, getRoom, enterRoom});
-  }
+  //println(room.desc);
+  look()
 
   room.visits++;
 

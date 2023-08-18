@@ -1,6 +1,6 @@
 const urbanDisk = () => ({
   //roomId: 'introduction',
-  roomId: 'car',
+  roomId: 'introduction',
 
   rooms: [
     /**
@@ -77,7 +77,19 @@ const urbanDisk = () => ({
           name: 'camera',
           desc: 'A polaroid camera with enough film to last a while. Type USE CAMERA to take a picture.',
           isHidden: true,
-          isTakeable: true
+          isTakeable: true,
+          onUse: () => {
+            if (disk.roomId === 'reactor') {
+              println("You finally take a picture of the reactor! Your goal is met, good job urban explorer!")
+              println("You hear a gunshot!")
+              println("It must have come from a close room.")
+              const utility = getRoom('utility_tunnel')
+              utility.items = utility.hidden_items
+              const car = getRoom('car')
+              car.goHome = true
+              unblockExit('car', 'home')
+            }
+          }
         },
         {
           name: 'tv',
@@ -166,6 +178,12 @@ const urbanDisk = () => ({
       id: 'car',
       name: 'Your Car',
       desc: `You stand outside your CAR in a forested area near the nuclear power plant. The power plant's fence is to the EAST.`,
+      goHome: false,
+      onLook: () => {
+        if (getRoom('car').goHome) {
+          println("Type GO HOME to get in the car and leave!")
+        }
+      },
       items: [
         {
           id: 'car',
@@ -228,6 +246,7 @@ const urbanDisk = () => ({
         { dir: 'east', id: 'outside_fence' },
         { dir: 'south', id: 'forest' },
         { dir: 'west', id: 'forest' },
+        { dir: 'home', id: 'finale', block: `You can't go home now, you still need that picture of the reactor!` },
       ]
     },
     {
@@ -426,6 +445,33 @@ const urbanDisk = () => ({
       id: 'utility_tunnel',
       name: 'Utility Tunnel',
       desc: `You are in a utility tunnel.`,
+      hidden_items: [
+        {
+          id: 'body',
+          name: "Body",
+          desc: "A BODY lays on the ground, surrounded by a pool of blood.",
+          onLook: () => {
+            println("It appears to be a security guard. A gunshot wound to the back.")
+            println("Hurry back to the car and GO HOME before the murderer finds you!")
+            const key = getItemInRoom('key', 'utility_tunnel')
+            if (key && key.isHidden) {
+              key.isHidden = false
+              key.isTakeable = true
+              println("The guard has a KEY on him.")
+            }
+          }
+        },
+        {
+          id: 'key',
+          name: 'Key',
+          desc: "A shiny key, looks like it goes to the doors around here.",
+          isTakeable: true,
+          isHidden: true,
+          onUse: () => {
+            println("You cannot use it here")
+          }
+        }
+      ],
       exits: [
         { dir: 'north', id: 'containment' },
         { dir: 'south', id: 'intake_structure' },
@@ -440,7 +486,7 @@ const urbanDisk = () => ({
         { dir: 'west', id: 'outside_fence' },
         { dir: 'east', id: 'containment', block: `The door is locked with a deadbolt, I would need to USE a KEY to get in.` },
         { dir: 'south', id: 'river' },
-        { dir: 'north', id: 'security_office' },
+        { dir: 'north', id: 'security_office', block: `The door is locked with a deadbolt, I would need to USE a KEY to get in.` },
       ],
     },
     {
@@ -452,6 +498,19 @@ const urbanDisk = () => ({
         { dir: 'east', id: 'intake_structure', block: `The tunnel is locked with a chain and padlock.` }
       ],
     },
+
+
+    /**
+     * Finale
+     */
+    {
+      id: 'finale',
+      name: 'Going Home',
+      desc: 'Driving down the road in the middle of the night.',
+      onLook: () => {
+        println(`You race away from the nuclear power plant, what happened still clouding your head.\n\nCongratulations, you win!`)
+      }
+    }
   ],
 
 
