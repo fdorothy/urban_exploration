@@ -1113,6 +1113,10 @@ let loadDisk = (uninitializedDisk) => {
   input.focus();
 };
 
+let removeItem = (itemName) => {
+  disk.inventory = disk.inventory.filter(item => item.id !== itemName)
+}
+
 // append any pending lines to the DOM each frame
 let print = () => {
   if (printQueue.length) {

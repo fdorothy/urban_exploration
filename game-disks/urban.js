@@ -1,6 +1,6 @@
 const urbanDisk = () => ({
   //roomId: 'introduction',
-  roomId: 'introduction',
+  roomId: 'car',
 
   rooms: [
     /**
@@ -149,7 +149,7 @@ const urbanDisk = () => ({
           desc: `Your beat up old car.`,
           onUse: () => {
             println('You drive to the abandoned nuclear power plant...\n\n')
-            enterRoom('outside_fence')
+            enterRoom('car')
           }
         }
       ],
@@ -163,53 +163,213 @@ const urbanDisk = () => ({
      *  ACT 2 - Outside Power Plant
      */
     {
+      id: 'car',
+      name: 'Your Car',
+      desc: `You stand outside your CAR in a forested area near the nuclear power plant. The power plant's fence is to the EAST.`,
+      items: [
+        {
+          id: 'car',
+          name: 'Car',
+          desc: `Your beat up old car.`,
+          onLook: () => {
+            const money = getItemInRoom('money', 'car')
+            if (money) {
+              println(`There is some MONEY in the car, just spare change.`)
+              money.isTakeable = true
+              money.isHidden = false
+            }
+            const flashlight = getItemInRoom('flashlight', 'car')
+            if (flashlight) {
+              println(`There is a FLASHLIGHT in the car.`)
+              flashlight.isTakeable = true
+              flashlight.isHidden = false
+            }
+          }
+        },
+        {
+          id: 'money',
+          name: 'Money',
+          desc: `Some spare change, one dollar and fifty cents.`,
+          isTakeable: false,
+          isHidden: true,
+          onUse: () => {
+            if (disk.roomId === 'homeless_camp') {
+              removeItem('money')
+              println(`You hand the homeless man your spare change. "Thank you, kind one," he says. A smile creeps across his face.`)
+              getRoom('homeless_camp').isHappy = true
+              const blanket = getItemInRoom('blanket', 'homeless_camp')
+              if (blanket) {
+                println(`The MAN motions towards the BLANKET`)
+                blanket.isTakeable = true
+              }
+            } else {
+              println(`You cannot use that here.`)
+            }
+          }
+        },
+        {
+          id: 'flashlight',
+          name: 'Flashlight',
+          desc: `A small flashlight, should come in handy.`,
+          isTakeable: false,
+          isHidden: true,
+          onUse: () => {
+            if (disk.roomId === 'dark_woods') {
+              println(`You illuminate the dark woods with your flashlight. You see a CAR hidden in the brush.`)
+              getItemInRoom('car', 'dark_woods').isHidden = false
+            } else {
+              println(`You illuminate the darkness.`)
+            }
+          }
+        },
+      ],
+      exits: [
+        { dir: 'north', id: 'forest' },
+        { dir: 'east', id: 'outside_fence' },
+        { dir: 'south', id: 'forest' },
+        { dir: 'west', id: 'forest' },
+      ]
+    },
+    {
       id: 'outside_fence',
       name: 'Outside the Fence',
       desc: `You stand outside the fence of the abandoned nuclear power plant. You can see the cooling tower against the night sky.`,
       exits: [
         { dir: 'north', id: 'homeless_camp' },
-        { dir: 'east', id: 'parking_lot'}//, block: `You cannot scale the barbed wire fence` },
+        { dir: 'east', id: 'parking_lot', block: `You cannot scale or go through the barbed wire fence` },
+        { dir: 'south', id: 'dark_woods' },
+        { dir: 'west', id: 'car' }
+      ],
+    },
+    {
+      id: 'dark_woods',
+      name: 'Dark Woods',
+      desc: `You stand in the dark woods. Which direction was it back?`,
+      items: [
+        {
+          id: 'unknown_car',
+          name: 'Car',
+          desc: `A mysterious car hidden in the brush, I wonder whose this is.`,
+          isBroken: false,
+          isHidden: true,
+          onLook: () => {
+            const car = getItemInRoom('car', 'dark_woods')
+            if (car.isBroken) {
+              println(`The car window is broken.`)
+              const boltcutters = getItemInRoom('boltcutters', 'dark_woods')
+              if (boltcutters) {
+                println('There are a pair of BOLTCUTTERS in the car.')
+                boltcutters.isTakeable = true
+                boltcutters.isHidden = false
+              }
+            } else {
+              println(`Maybe I can break a window with a heavy object.`)
+            }
+          }
+        },
+        {
+          id: 'boltcutters',
+          name: 'Boltcutters',
+          desc: `A pair of bultcutters, could come in handy.`,
+          isHidden: true,
+          isTakeable: false
+        },
+      ],
+      exits: [
+        { dir: 'north', id: 'outside_fence' },
+        { dir: 'east', id: 'dark_woods' },
+        { dir: 'south', id: 'forest' },
+        { dir: 'west', id: 'dark_woods' },
       ],
     },
     {
       id: 'homeless_camp',
       name: 'Homeless Camp',
       desc: `You are standing in a homeless camp. There is a homeless MAN looking at you from the opposite side of a small fire.`,
+      items: [
+        {
+          id: 'fire',
+          name: 'Fire',
+          isLarge: false,
+          onLook: () => {
+            if (getItemInRoom('fire', 'homeless_camp').isLarge) {
+              println(`The fire is roaring. The homeless man looks content beside it.`)
+            } else {
+              println(`The fire is small. The homeless man looks cold.`)
+            }
+          }
+        },
+        {
+          id: 'blanket',
+          name: 'Blanket',
+          desc: 'A simple blanket',
+          onLook: () => {
+            const blanket = getItemInRoom('blanket', 'homeless_camp')
+            if (blanket) {
+              if (blanket.isTakeable) {
+                println("The MAN nods at you to TAKE it with you.")
+              } else {
+                println("Tt is wrapped around the MAN's body to keep him warm.")
+              }
+            } else {
+            }
+          },
+          onUse: () => {
+            if (disk.roomId === 'outside_fence') {
+              println("You throw the blanket over the barbed wire fence.")
+              removeItem('blanket')
+              const room = getRoom('outside_fence')
+              const exit = getExit('east', room.exits)
+              delete exit.block;
+            } else {
+              println("You wrap the blanket around youself, it is warm.")
+            }
+          },
+          isTakeable: false
+        },
+      ],
       exits: [
         { dir: 'south', id: 'outside_fence' },
         { dir: 'north', id: 'forest' },
+        { dir: 'east', id: 'forest' },
+        { dir: 'west', id: 'forest' }
       ],
     },
     {
       id: 'forest',
       name: 'The Forest',
       desc: `You are lost in the forest. Which way did you come from?`,
+      items: [
+        {
+          id: 'wood',
+          name: 'Wood',
+          desc: `Some sticks and branches.`,
+          isTakeable: true,
+          onUse: () => {
+            if (disk.roomId === 'dark_woods') {
+              const car = getItemInRoom('car', 'dark_woods')
+              if (car.isHidden) {
+                println("You cannot do that here.")
+              } else {
+                if (car && !car.isBroken) {
+                  println(`You break the car's window with a thick branch`)
+                  car.isBroken = true
+                } else {
+                  println(`You've already broken the window.`)
+                }
+              }
+            } else {
+              println("You cannot do that here.")
+            }
+          }
+        },
+      ],
       exits: [
-        { dir: 'north', id: 'forest' },
+        { dir: 'north', id: 'dark_woods' },
         { dir: 'east', id: 'forest' },
         { dir: 'south', id: 'homeless_camp' },
         { dir: 'west', id: 'forest' },
       ]
-    },
-    {
-      id: 'parking_lot',
-      name: 'Parking Lot',
-      desc: `You are in the parking lot of the nuclear power plant. There are a few broken down cars here, their owners long gone.`,
-      exits: [
-        { dir: 'west', id: 'outside_fence' },
-        { dir: 'east', id: 'containment' },
-        { dir: 'south', id: 'river' },
-        { dir: 'north', id: 'security_office' },
-      ],
-    },
-    {
-      id: 'river',
-      name: 'River',
-      desc: `You stand on the banks of a wide river. The water here is warm. A channel of water flows towards the power plant.`,
-      exits: [
-        { dir: 'north', id: 'intake_structure' },
-        { dir: 'west', id: 'parking_lot' }
-      ],
     },
 
 
@@ -262,7 +422,32 @@ const urbanDisk = () => ({
         { dir: 'east', id: 'security_office' },
       ],
     },
+    {
+      id: 'parking_lot',
+      name: 'Parking Lot',
+      desc: `You are in the parking lot of the nuclear power plant. There are a few broken down cars here, their owners long gone.`,
+      exits: [
+        { dir: 'west', id: 'outside_fence' },
+        { dir: 'east', id: 'containment' },
+        { dir: 'south', id: 'river' },
+        { dir: 'north', id: 'security_office' },
+      ],
+    },
+    {
+      id: 'river',
+      name: 'River',
+      desc: `You stand on the banks of a wide river. The water here is warm. A channel of water flows towards the power plant.`,
+      exits: [
+        { dir: 'north', id: 'intake_structure' },
+        { dir: 'west', id: 'parking_lot' }
+      ],
+    },
   ],
+
+
+  /**
+   *  CHARACTERS
+   */
   characters: [
     {
       name: ['walter', 'roommate'],
@@ -286,6 +471,19 @@ const urbanDisk = () => ({
           line: `"Don't you usually put them in the kitchen cabinets?"`
         }
       ]
+    },
+    {
+      name: ['homeless man', 'man', 'homeless', 'sam'],
+      roomId: 'homeless_camp',
+      desc: 'The homeless man sits on the other side of the fire.',
+      onTalk: () => {
+        if (getRoom('homeless_camp').isHappy) {
+          println("Hello, my name is SAM. You aren't the first one through here recently. What can I help you with?")
+        } else {
+          println(`The homeless man remains silent, with a frown on his face. Finally, he says "Got any spare change?"`)
+        }
+      },
+      topics: []
     },
   ],
 });
