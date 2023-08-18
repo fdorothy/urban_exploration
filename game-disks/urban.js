@@ -272,7 +272,17 @@ const urbanDisk = () => ({
           name: 'Boltcutters',
           desc: `A pair of bultcutters, could come in handy.`,
           isHidden: true,
-          isTakeable: false
+          isTakeable: false,
+          onUse: () => {
+            if (disk.roomId === 'outside_fence') {
+              println("You cut a hole in the fence.")
+              unblockExit('outside_fence', 'east')
+            }
+            if (disk.roomId === 'river') {
+              println("You cut the chain with the boltcutters.")
+              unblockExit('river', 'east')
+            }
+          },
         },
       ],
       exits: [
@@ -381,7 +391,7 @@ const urbanDisk = () => ({
       name: 'Containment Structure',
       desc: `You are in the containment structure. A blueish glow can be seen from DOWN below.`,
       exits: [
-        { dir: 'west', id: 'parking_lot' },
+        { dir: 'west', id: 'parking_lot', block: `The door is locked with a deadbolt. I would need to USE a KEY to open it.` },
         { dir: 'south', id: 'utility_tunnel' },
         { dir: 'down', id: 'reactor' },
       ],
@@ -392,7 +402,7 @@ const urbanDisk = () => ({
       desc: `You are in the water intake structure of the nuclear power plant.`,
       exits: [
         { dir: 'north', id: 'utility_tunnel' },
-        { dir: 'south', id: 'river' }
+        { dir: 'west', id: 'river' }
       ],
     },
     {
@@ -428,7 +438,7 @@ const urbanDisk = () => ({
       desc: `You are in the parking lot of the nuclear power plant. There are a few broken down cars here, their owners long gone.`,
       exits: [
         { dir: 'west', id: 'outside_fence' },
-        { dir: 'east', id: 'containment' },
+        { dir: 'east', id: 'containment', block: `The door is locked with a deadbolt, I would need to USE a KEY to get in.` },
         { dir: 'south', id: 'river' },
         { dir: 'north', id: 'security_office' },
       ],
@@ -436,10 +446,10 @@ const urbanDisk = () => ({
     {
       id: 'river',
       name: 'River',
-      desc: `You stand on the banks of a wide river. The water here is warm. A channel of water flows towards the power plant.`,
+      desc: `You stand on the banks of a wide river. The water here is warm. A utility tunnel leads EAST towards the intake structure.`,
       exits: [
-        { dir: 'north', id: 'intake_structure' },
-        { dir: 'west', id: 'parking_lot' }
+        { dir: 'north', id: 'parking_lot' },
+        { dir: 'east', id: 'intake_structure', block: `The tunnel is locked with a chain and padlock.` }
       ],
     },
   ],
@@ -487,6 +497,12 @@ const urbanDisk = () => ({
     },
   ],
 });
+
+const unblockExit = (roomId, exitId) => {
+  const room = getRoom(roomId)
+  const exit = getExit(exitId, room.exits)
+  delete exit.block;
+}
 
 const unhideItem = (itemId, desc) => {
   const item = getItemInRoom(itemId, disk.roomId)
