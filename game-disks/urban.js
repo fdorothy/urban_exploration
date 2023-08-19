@@ -85,7 +85,7 @@ const urbanDisk = () => ({
         },
         {
           name: 'tv',
-          desc: `The TV is in the middle of a news clip.\n"...a missing girl from Birmingham. She was last seen on Friday night, near the Saturn Bar in Avondale. She is twenty-one and is considered at risk. Now for the weather..."`
+          desc: `The TV is in the middle of a news clip.\n"...a missing woman from Birmingham. She was last seen on Friday night, near the Saturn Bar in Avondale. She is twenty-one and is considered at risk. Now for the weather..."`
         }
       ],
       exits: [
@@ -201,6 +201,8 @@ const urbanDisk = () => ({
               removeItem('money')
               println(`You hand the homeless man your spare change. "Thank you, kind one," he says. A smile creeps across his face.`)
               globals.manHappy = true
+              const man = getCharacter('man')
+              man.topics = man.hidden_topics
               const blanket = getItemInRoom('blanket', 'homeless_camp')
               if (blanket) {
                 println(`The homeless MAN motions towards his BLANKET`)
@@ -501,7 +503,7 @@ const urbanDisk = () => ({
       onLook: () => {
         println(`You race away from the nuclear power plant, what happened still processing in your head.\n\nWho shot the man? Where did he go?\n\nCongratulations, game over!\n`)
         println(`--- CREDITS ---`)
-        println(`Fredric Dorothy (redmountainman1) - Story, coding and artwork`)
+        println(`Fredric Dorothy - Story, coding and artwork`)
         println(`JimJam - Music and sound effects\n\n`)
         println(`Made for Vulcan Jam 5. Thank you again for playing.`)
       }
@@ -522,7 +524,7 @@ const urbanDisk = () => ({
         {
           option: "What's on **TV**?",
           removeOnRead: true,
-          line: `"Just the news. Something about a missing child in the area."`
+          line: `"Just the news. Something about a missing person in the area."`
         },
         {
           option: "Where's my **CAMERA**?",
@@ -547,7 +549,24 @@ const urbanDisk = () => ({
           println(`The homeless man remains silent, with a frown on his face. Finally, he says "Got any spare change?"`)
         }
       },
-      topics: []
+      topics: [],
+      hidden_topics: [
+        {
+          option: "Tell me about the **NUCLEAR** power plant",
+          removeOnRead: true,
+          line: `"The plant itself was decomissioned back in '88. From what I understand, the reactor core is still in there being constantly cooled by water from the river."`
+        },
+        {
+          option: "WHO was here earlier?",
+          removeOnRead: true,
+          line: `"I saw a man and a woman in the woods earlier, yessir. Not sure what they were doing."`
+        },
+        {
+          option: "What can I do with the BLANKET?",
+          removeOnRead: true,
+          line: `"It'll keep ya warm, and it's so thick it might protect you against spiky bits. Don't worry about me, I'll stay by the fire and I've got plenty of other blankets."`
+        },
+      ]
     },
   ],
 });
