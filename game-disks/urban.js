@@ -177,7 +177,7 @@ const urbanDisk = () => ({
     {
       id: 'car',
       name: 'Your Car',
-      desc: `You stand outside your CAR in a forested area near the nuclear power plant. The power plant's fence is to the EAST.`,
+      desc: `You stand outside your CAR in a forested area near the nuclear power plant. The power plant's fence is to the EAST. You are surrounded by forest in all other cardinal directions.`,
       onLook: () => {
         if (globals.goHome) {
           println("Type GO HOME to get in the car and leave!")
@@ -246,7 +246,7 @@ const urbanDisk = () => ({
     {
       id: 'outside_fence',
       name: 'Outside the Fence',
-      desc: `You stand outside the barbed wire fence of the abandoned nuclear power plant. You can see the cooling tower against the night sky.`,
+      desc: `You stand outside the barbed wire fence of the abandoned nuclear power plant. You can see the cooling tower against the night sky. To the EAST is the fence, your car is WEST and you are surrounded by woods to the NORTH and SOUTH.`,
       onLook: () => {
         if (globals.fenceCompromised) {
           println("The barbed wire fence is compromised, you can travel through it by typing GO EAST")
@@ -262,7 +262,7 @@ const urbanDisk = () => ({
     {
       id: 'dark_woods',
       name: 'Dark Woods',
-      desc: `The woods are very dark here, and it is hard to see as you make your way through the brambles.`,
+      desc: `The woods are very dark here, and it is hard to see as you make your way through the brambles. You are surrounded by woods to the NORTH, EAST, SOUTH and WEST.`,
       items: [
         {
           id: 'unknown_car',
@@ -318,7 +318,7 @@ const urbanDisk = () => ({
     {
       id: 'homeless_camp',
       name: 'Homeless Camp',
-      desc: `A makeshift tent is made using shipping palettes and tarps.\n\nClothes are hanging up on a line.\n\nThere is a homeless MAN looking at you from the opposite side of a small fire.`,
+      desc: `A makeshift tent is made using shipping palettes and tarps.\n\nClothes are hanging up on a line.\n\nThere is a homeless MAN looking at you from the opposite side of a small fire. The fence is to the SOUTH. You are surrounded by woods in all other directions.`,
       items: [
         {
           id: 'fire',
@@ -372,7 +372,7 @@ const urbanDisk = () => ({
     {
       id: 'forest',
       name: 'The Forest',
-      desc: `The trees surround you, but at least there is moonlight here.\n\nYou are lost in the forest.\n\nMaybe you can find your way back?`,
+      desc: `The trees surround you, but at least there is moonlight here.\n\nYou are lost in the forest.\n\nThere is forest in all directions. Maybe you can find your way back?`,
       items: [
         {
           id: 'wood',
@@ -437,7 +437,7 @@ const urbanDisk = () => ({
     {
       id: 'security_office',
       name: 'Security Office',
-      desc: `Security TVs and alarm systems sit on tables.\n\nAs you walked in you thought you saw some movement on one of the TVs, but whatever it was is now gone.\n\nThere is no one here.`,
+      desc: `Security TVs and alarm systems sit on tables.\n\nAs you walked in you thought you saw some movement on one of the TVs, but whatever it was is now gone.\n\nThere is no one here.\n\nTo the EAST is the utility tunnel, and to the SOUTH is an exit to the parking lot.`,
       exits: [
         { dir: 'east', id: 'utility_tunnel' },
         { dir: 'south', id: 'parking_lot' }
@@ -446,7 +446,7 @@ const urbanDisk = () => ({
     {
       id: 'reactor',
       name: 'Reactor Core',
-      desc: `As you walked down the stairs you felt like you were entering a portal to another world.\n\nThe blue light shines up from the reactor core pool.\n\nThis is it, what you came here for...now it's time to take that picture.`,
+      desc: `As you walked down the stairs you felt like you were entering a portal to another world.\n\nThe blue light shines up from the reactor core pool.\n\nThis is it, what you came here for...now it's time to take that picture (USE CAMERA).\n\nYou can only GO UP from here.`,
       exits: [
         { dir: 'up', id: 'containment' },
       ],
@@ -454,7 +454,7 @@ const urbanDisk = () => ({
     {
       id: 'utility_tunnel',
       name: 'Utility Tunnel',
-      desc: `The tunnel is wide enough to drive a golf cart through.\n\nWires and pipes line the concrete walls.`,
+      desc: `The tunnel is wide enough to drive a golf cart through.\n\nWires and pipes line the concrete walls. The tunnels lead to the EAST, SOUTH and NORTH.`,
       onLook: () => {
         if (globals.womanInCloset) {
           println("\nThunk, thunk, thunk.\n\nYou hear banging coming from a closet to the WEST.")
@@ -504,7 +504,7 @@ const urbanDisk = () => ({
     {
       id: 'closet',
       name: `Janitor's Closet`,
-      desc: `A closet used for storing cleaning supplies.`,
+      desc: `A closet used for storing cleaning supplies. You can only go EAST back to the utility tunnels.`,
       onLook: () => {
         if (globals.womanInCloset) {
           println(`A young WOMAN is huddled in the corner of the closet, sobbing. Too traumatized to speak clearly, she says "please TAKE me with you!"`)
@@ -532,7 +532,7 @@ const urbanDisk = () => ({
     {
       id: 'parking_lot',
       name: 'Parking Lot',
-      desc: `Looks like the nuclear power plant's main parking lot. There are a few broken down cars here, their owners long gone. The night is clear with a full moon, and you can see many more stars out here than you could back in town.\n\nIt makes you feel...isolated.`,
+      desc: `Looks like the nuclear power plant's main parking lot. There are a few broken down cars here, their owners long gone. The night is clear with a full moon, and you can see many more stars out here than you could back in town.\n\nIt makes you feel...isolated.\n\nThe fence is back to the WEST. A river is to the SOUTH. The containment building is to the EAST and to the NORTH is a security office`,
       exits: [
         { dir: 'west', id: 'outside_fence' },
         { dir: 'east', id: 'containment', block: `The door is locked with a deadbolt, I would need to USE a KEY to get in.` },
@@ -543,7 +543,7 @@ const urbanDisk = () => ({
     {
       id: 'river',
       name: 'River',
-      desc: `You stand on the banks of a wide river. The trees reach out over the riverbank, like they are trying to escape the power plant. You touch the water and it is unusually warm. A utility tunnel leads EAST towards the intake structure.`,
+      desc: `You stand on the banks of a wide river. The trees reach out over the riverbank, like they are trying to escape the power plant. You touch the water and it is unusually warm. A utility tunnel leads EAST towards the intake structure. To the NORTH is the parking lot.`,
       exits: [
         { dir: 'north', id: 'parking_lot' },
         { dir: 'east', id: 'intake_structure', block: `The tunnel is locked with a chain and padlock.` }
