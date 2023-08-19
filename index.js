@@ -989,8 +989,6 @@ let enterRoom = (id) => {
 
   playMusic(room.music)
 
-  img(room.img)
-
   disk.roomId = id;
 
   //println(room.desc);

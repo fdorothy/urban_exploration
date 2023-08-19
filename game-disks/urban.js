@@ -17,6 +17,9 @@ const urbanDisk = () => ({
       id: 'introduction',
       name: 'Introduction',
       desc: `The sun sets, filling the apartment with a full display of vibrant reds and oranges. As you sit in your apartment, you think over tonight's mission: explore the old abandoned nuclear power plant, and take a picture of the reactor. You need to find your car keys and camera before driving over there.\n\nNew to text adventures? Type HELP to see a list of commands. Type GO START to continue`,
+      onLook: () => {
+        img('img/introduction.png')
+      },
       exits: [
         { dir: 'start', id: 'bathroom' },
       ]
@@ -29,6 +32,7 @@ const urbanDisk = () => ({
       id: 'bathroom',
       name: 'Bathroom',
       desc: `You stand in your apartment's only bathroom. The living room is to the NORTH.`,
+      img: `img/bathroom.png`,
       onLook: () => {
         if (getRoom('bathroom').smelly) {
           println("The bathroom stinks")
@@ -60,6 +64,7 @@ const urbanDisk = () => ({
     {
       id: 'living_room',
       name: 'Living Room',
+      img: `img/living_room.png`,
       desc: `The living room is sparsely furnished. WALTER sits on a couch across from the TV. A BOOKSHELF is up against a wall. To the SOUTH is the bathroom. To the NORTH is the kitchen. To the EAST is the garage.`,
       items: [
         {
@@ -98,6 +103,7 @@ const urbanDisk = () => ({
     {
       id: 'kitchen',
       name: 'Kitchen',
+      img: `img/kitchen.png`,
       desc: `There is a pile of dirty dishes in the SINK. You think you see a cockroach scurry into the CABINETS as the light turned on. The sound of your tv plays to the SOUTH.`,
       smelly: true,
       onLook: () => {
@@ -141,6 +147,7 @@ const urbanDisk = () => ({
     {
       id: 'garage',
       name: 'Garage',
+      img: `img/garage.png`,
       desc: `The sound of cars speeding by on the highway outside echoes through the parking garage. Your CAR is a few rows down on the right. Your apartment is to the WEST`,
       items: [
         {
@@ -177,6 +184,7 @@ const urbanDisk = () => ({
     {
       id: 'car',
       name: 'Your Car',
+      img: `img/car.png`,
       desc: `You stand outside your CAR in a forested area near the nuclear power plant. The power plant's fence is to the EAST. You are surrounded by forest in all other cardinal directions.`,
       onLook: () => {
         if (globals.goHome) {
@@ -246,6 +254,7 @@ const urbanDisk = () => ({
     {
       id: 'outside_fence',
       name: 'Outside the Fence',
+      img: `img/outside_fence.png`,
       desc: `You stand outside the barbed wire fence of the abandoned nuclear power plant. You can see the cooling tower against the night sky. To the EAST is the fence, your car is WEST and you are surrounded by woods to the NORTH and SOUTH.`,
       onLook: () => {
         if (globals.fenceCompromised) {
@@ -262,6 +271,7 @@ const urbanDisk = () => ({
     {
       id: 'dark_woods',
       name: 'Dark Woods',
+      img: `img/forest.png`,
       desc: `The woods are very dark here, and it is hard to see as you make your way through the brambles. You are surrounded by woods to the NORTH, EAST, SOUTH and WEST.`,
       items: [
         {
@@ -318,6 +328,7 @@ const urbanDisk = () => ({
     {
       id: 'homeless_camp',
       name: 'Homeless Camp',
+      img: `img/homeless_camp.png`,
       desc: `A makeshift tent is made using shipping palettes and tarps.\n\nClothes are hanging up on a line.\n\nThere is a homeless MAN looking at you from the opposite side of a small fire. The fence is to the SOUTH. You are surrounded by woods in all other directions.`,
       items: [
         {
@@ -372,6 +383,7 @@ const urbanDisk = () => ({
     {
       id: 'forest',
       name: 'The Forest',
+      img: `img/forest.png`,
       desc: `The trees surround you, but at least there is moonlight here.\n\nYou are lost in the forest.\n\nThere is forest in all directions. Maybe you can find your way back?`,
       items: [
         {
@@ -418,6 +430,7 @@ const urbanDisk = () => ({
     {
       id: 'containment',
       name: 'Containment Structure',
+      img: `img/containment.png`,
       desc: `The containment structure is a large, cylindrical, concrete room with a domed ceiling. There are many pipes and sensors running along the walls.\n\nThere are stairs that go DOWN towards a bluish glow, and a door that leads back to the outside to the WEST.\n\nTo the SOUTH is the utility tunnel.`,
       exits: [
         { dir: 'west', id: 'parking_lot', block: `The door is locked with a deadbolt. I would need to USE a KEY to open it.` },
@@ -428,6 +441,7 @@ const urbanDisk = () => ({
     {
       id: 'intake_structure',
       name: 'Intake Structure',
+      img: `img/intake_structure.png`,
       desc: `You are in the water intake structure of the nuclear power plant. Pipes and sensors stretch across the floor in all directions, feeding water to the different parts of the nuclear power plant. You hear gurgling sounds as the water is still being pumped in to cool the decomissioned reactor.\n\nTo the NORTH is a utility tunnel.\n\nTo the WEST is the river.`,
       exits: [
         { dir: 'north', id: 'utility_tunnel' },
@@ -437,6 +451,7 @@ const urbanDisk = () => ({
     {
       id: 'security_office',
       name: 'Security Office',
+      img: `img/security_office.png`,
       desc: `Security TVs and alarm systems sit on tables.\n\nAs you walked in you thought you saw some movement on one of the TVs, but whatever it was is now gone.\n\nThere is no one here.\n\nTo the EAST is the utility tunnel, and to the SOUTH is an exit to the parking lot.`,
       exits: [
         { dir: 'east', id: 'utility_tunnel' },
@@ -446,6 +461,7 @@ const urbanDisk = () => ({
     {
       id: 'reactor',
       name: 'Reactor Core',
+      img: `img/reactor.png`,
       desc: `As you walked down the stairs you felt like you were entering a portal to another world.\n\nThe blue light shines up from the reactor core pool.\n\nThis is it, what you came here for...now it's time to take that picture (USE CAMERA).\n\nYou can only GO UP from here.`,
       exits: [
         { dir: 'up', id: 'containment' },
@@ -454,6 +470,7 @@ const urbanDisk = () => ({
     {
       id: 'utility_tunnel',
       name: 'Utility Tunnel',
+      img: `img/utility_tunnel.png`,
       desc: `The tunnel is wide enough to drive a golf cart through.\n\nWires and pipes line the concrete walls. The tunnels lead to the EAST, SOUTH and NORTH.`,
       onLook: () => {
         if (globals.womanInCloset) {
@@ -504,6 +521,7 @@ const urbanDisk = () => ({
     {
       id: 'closet',
       name: `Janitor's Closet`,
+      img: `img/closet.png`,
       desc: `A closet used for storing cleaning supplies. You can only go EAST back to the utility tunnels.`,
       onLook: () => {
         if (globals.womanInCloset) {
@@ -532,6 +550,7 @@ const urbanDisk = () => ({
     {
       id: 'parking_lot',
       name: 'Parking Lot',
+      img: `img/parking_lot.png`,
       desc: `Looks like the nuclear power plant's main parking lot. There are a few broken down cars here, their owners long gone. The night is clear with a full moon, and you can see many more stars out here than you could back in town.\n\nIt makes you feel...isolated.\n\nThe fence is back to the WEST. A river is to the SOUTH. The containment building is to the EAST and to the NORTH is a security office`,
       exits: [
         { dir: 'west', id: 'outside_fence' },
@@ -543,6 +562,7 @@ const urbanDisk = () => ({
     {
       id: 'river',
       name: 'River',
+      img: `img/river.png`,
       desc: `You stand on the banks of a wide river. The trees reach out over the riverbank, like they are trying to escape the power plant. You touch the water and it is unusually warm. A utility tunnel leads EAST towards the intake structure. To the NORTH is the parking lot.`,
       exits: [
         { dir: 'north', id: 'parking_lot' },
@@ -558,6 +578,7 @@ const urbanDisk = () => ({
       id: 'finale',
       name: 'Going Home',
       onLook: () => {
+        img('img/finale.png')
         if (!globals.womanInCloset) {
           println(`You help the woman into the car. She appears relieved to be in a safe place.\n\n`)
         }
