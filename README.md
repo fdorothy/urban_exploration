@@ -23,3 +23,8 @@ static-server .
 
 Visit localhost:9080 in your web browser. The game should load and be playable!
 
+## Credits
+
+Royalty free images taken from:
+
+https://unsplash.com/
