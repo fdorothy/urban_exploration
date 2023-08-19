@@ -78,6 +78,7 @@ const urbanDisk = () => ({
           isHidden: true,
           isTakeable: true,
           onUse: () => {
+            img(getRoom(disk.roomId).img)
             if (disk.roomId === 'reactor') {
               println("You finally take a picture of the reactor! Your goal is met, good job urban explorer!")
               println("You hear a gunshot!")

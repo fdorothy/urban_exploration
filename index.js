@@ -225,7 +225,7 @@ let img = (name) => {
 let look = () => {
   const room = getRoom(disk.roomId);
 
-  img(room.img)
+  //img(room.img)
 
   println(room.desc)
 
