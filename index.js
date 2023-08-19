@@ -535,8 +535,9 @@ let takeItem = (itemName) => {
   if (typeof itemIndex === 'number' && itemIndex > -1) {
     const item = room.items[itemIndex];
     if (item.isTakeable) {
-      disk.inventory.push(item);
-      room.items.splice(itemIndex, 1);
+      disk.inventory.push({...item});
+      if (!item.persistOnTake)
+        room.items.splice(itemIndex, 1);
 
       if (typeof item.onTake === 'function') {
         item.onTake({disk, println, room, getRoom, enterRoom, item});
@@ -1112,7 +1113,7 @@ let loadDisk = (uninitializedDisk) => {
 };
 
 let removeItem = (itemName) => {
-  disk.inventory = disk.inventory.filter(item => item.id !== itemName)
+  disk.inventory = disk.inventory.filter(item => item.name !== itemName)
 }
 
 // append any pending lines to the DOM each frame

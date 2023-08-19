@@ -1,7 +1,8 @@
 const globals = {
   goHome: false,
   manHappy: false,
-  fenceCompromised: false
+  fenceCompromised: false,
+  womanInCloset: true
 }
 
 const urbanDisk = () => ({
@@ -147,8 +148,20 @@ const urbanDisk = () => ({
           name: 'Car',
           desc: `Your beat up old car.`,
           onUse: () => {
-            println(`You get into your old, beat up car, put the keys in the ignition, and drive out of the parking garage. You merge onto the highway, the cars speeding into the sunset.\n\nAs you drive into the countryside towards the abandoned nuclear power plant, you remember back to your other adventures. The hot steam ducts below the city, the old insane asylum with the beds with straps. Your heart races at the thought of a new adventure.\n\n...\n\nYou arrive at the plant, the sun has gone down and it is night time. You pull over on the outskirts, hiding the car amongst the trees.`)
-            enterRoom('car')
+            const keys = getItemInInventory('keys')
+            const camera = getItemInInventory('camera')
+            if (keys && camera) {
+              println(`You get into your old, beat up car, put the keys in the ignition, and drive out of the parking garage. You merge onto the highway, the cars speeding into the sunset.\n\nAs you drive into the countryside towards the abandoned nuclear power plant, you remember back to your other adventures. The hot steam ducts below the city, the old insane asylum with the beds with straps. Your heart races at the thought of a new adventure.\n\n...\n\nYou arrive at the plant, the sun has gone down and it is night time. You pull over on the outskirts, hiding the car amongst the trees.`)
+              removeItem('keys')
+              enterRoom('car')
+            } else {
+              if (!keys) {
+                println(`You need your car keys before leaving.`)
+              }
+              if (!camera) {
+                println(`You need your camera before leaving.`)
+              }
+            }
           }
         }
       ],
@@ -200,14 +213,7 @@ const urbanDisk = () => ({
             if (disk.roomId === 'homeless_camp') {
               removeItem('money')
               println(`You hand the homeless man your spare change. "Thank you, kind one," he says. A smile creeps across his face.`)
-              globals.manHappy = true
-              const man = getCharacter('man')
-              man.topics = man.hidden_topics
-              const blanket = getItemInRoom('blanket', 'homeless_camp')
-              if (blanket) {
-                println(`The homeless MAN motions towards his BLANKET`)
-                blanket.isTakeable = true
-              }
+              makeManHappy()
             } else {
               println(`You cannot use that here.`)
             }
@@ -373,6 +379,7 @@ const urbanDisk = () => ({
           name: 'Wood',
           desc: `Some flimsy sticks and sturdier branches.`,
           isTakeable: true,
+          persistOnTake: true,
           onUse: () => {
             if (disk.roomId === 'dark_woods') {
               const car = getItemInRoom('car', 'dark_woods')
@@ -386,6 +393,10 @@ const urbanDisk = () => ({
                   println(`You've already broken the window.`)
                 }
               }
+            } else if (disk.roomId === 'homeless_camp') {
+              println(`You throw the wood on the small fire. It roars back to life. The homeless man smiles at you.`)
+              removeItem('wood')
+              makeManHappy()
             } else {
               println("You cannot do that here.")
             }
@@ -417,7 +428,7 @@ const urbanDisk = () => ({
     {
       id: 'intake_structure',
       name: 'Intake Structure',
-      desc: `You are in the water intake structure of the nuclear power plant. Pipes and sensors stretch across the floor in all directions, feeding water to the different parts of the nuclear power plant. You hear gurgling sounds as the water is still being pumped in to cool the decomissioned reactor.\n\nTo the NORTH is a utility tunnel.\n\nTo the SOUTH is the river.`,
+      desc: `You are in the water intake structure of the nuclear power plant. Pipes and sensors stretch across the floor in all directions, feeding water to the different parts of the nuclear power plant. You hear gurgling sounds as the water is still being pumped in to cool the decomissioned reactor.\n\nTo the NORTH is a utility tunnel.\n\nTo the WEST is the river.`,
       exits: [
         { dir: 'north', id: 'utility_tunnel' },
         { dir: 'west', id: 'river' }
@@ -444,6 +455,11 @@ const urbanDisk = () => ({
       id: 'utility_tunnel',
       name: 'Utility Tunnel',
       desc: `The tunnel is wide enough to drive a golf cart through.\n\nWires and pipes line the concrete walls.`,
+      onLook: () => {
+        if (globals.womanInCloset) {
+          println("\nThunk, thunk, thunk.\n\nYou hear banging coming from a closet to the WEST.")
+        }
+      },
       hidden_items: [
         {
           id: 'body',
@@ -462,7 +478,19 @@ const urbanDisk = () => ({
           isTakeable: true,
           isHidden: true,
           onUse: () => {
-            println("You cannot use it here")
+            switch (disk.roomId) {
+            case "utility_tunnel":
+              println("You unlock the utility closet door. You can enter with GO WEST.")
+              unblockExit('utility_tunnel', 'west')
+              break
+            case "containment":
+              println("You unlock the main door to the outside. You can leave with GO WEST.")
+              unblockExit('containment', 'west')
+              break
+            default:
+              println("You cannot use it here")
+              break
+            }
           }
         }
       ],
@@ -470,6 +498,35 @@ const urbanDisk = () => ({
         { dir: 'north', id: 'containment' },
         { dir: 'south', id: 'intake_structure' },
         { dir: 'east', id: 'security_office' },
+        { dir: 'west', id: 'closet', block: `The door is locked with a deadbolt. I need to USE a KEY to get in.`}
+      ],
+    },
+    {
+      id: 'closet',
+      name: `Janitor's Closet`,
+      desc: `A closet used for storing cleaning supplies.`,
+      onLook: () => {
+        if (globals.womanInCloset) {
+          println(`A young WOMAN is huddled in the corner of the closet, sobbing. Too traumatized to speak clearly, she says "please TAKE me with you!"`)
+        }
+      },
+      items: [
+        {
+          id: 'woman',
+          name: 'Woman',
+          desc: `A young woman. She is sobbing. Too traumatized to speak clearly, she says "please we have to get out of here!"`,
+          isTakeable: true,
+          onTake: () => {
+            println(`The woman follows you. "Thank you, thank you, thank you..." she says over and over again.`)
+            globals.womanInCloset = false
+          },
+          onUse: () => {
+            println("That is incredibly inappropriate.")
+          },
+        }
+      ],
+      exits: [
+        { dir: 'east', id: 'utility_tunnel' }
       ],
     },
     {
@@ -501,11 +558,18 @@ const urbanDisk = () => ({
       id: 'finale',
       name: 'Going Home',
       onLook: () => {
-        println(`You race away from the nuclear power plant, what happened still processing in your head.\n\nWho shot the man? Where did he go?\n\nCongratulations, game over!\n`)
+        if (!globals.womanInCloset) {
+          println(`You help the woman into the car. She appears relieved to be in a safe place.\n\n`)
+        }
+        println(`You race away from the nuclear power plant, what happened still processing in your head.\n\nWho shot the man? Where did he go?\n`)
+        if (globals.womanInCloset) {
+          println(`You wonder what that banging sound was coming from the janitor's closet in the utility tunnel. Oh well, at least you got out alive.\n`)
+        }
+        println(`Congratulations, game over!\n`)
         println(`--- CREDITS ---`)
         println(`Fredric Dorothy - Story, coding and artwork`)
         println(`JimJam - Music and sound effects\n\n`)
-        println(`Made for Vulcan Jam 5. Thank you again for playing.`)
+        println(`Made for Vulcan Jam 5. Thank you for playing!`)
       }
     }
   ],
@@ -577,6 +641,17 @@ const unblockExit = (roomId, exitId) => {
   const room = getRoom(roomId)
   const exit = getExit(exitId, room.exits)
   delete exit.block;
+}
+
+const makeManHappy = () => {
+  globals.manHappy = true
+  const man = getCharacter('man')
+  man.topics = man.hidden_topics
+  const blanket = getItemInRoom('blanket', 'homeless_camp')
+  if (blanket) {
+    println(`The homeless MAN motions towards his BLANKET`)
+    blanket.isTakeable = true
+  }
 }
 
 const unhideItem = (itemId, desc) => {
