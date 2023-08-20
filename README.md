@@ -28,3 +28,7 @@ Visit localhost:9080 in your web browser. The game should load and be playable!
 Royalty free images taken from:
 
 https://unsplash.com/
+
+https://opengameart.org/content/creepy-forest-f
+
+https://opengameart.org/content/mystical-theme
