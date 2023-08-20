@@ -1,6 +1,7 @@
 const globals = {
   goHome: false,
   manHappy: false,
+  manWarm: false,
   fenceCompromised: false,
   womanInCloset: true
 }
@@ -409,7 +410,7 @@ const urbanDisk = () => ({
             } else if (disk.roomId === 'homeless_camp') {
               println(`You throw the wood on the small fire. It roars back to life. The homeless man smiles at you.`)
               removeItem('wood')
-              makeManHappy()
+              makeManWarm()
             } else {
               println("You cannot do that here.")
             }
@@ -629,10 +630,17 @@ const urbanDisk = () => ({
       roomId: 'homeless_camp',
       desc: 'The homeless man sits on the other side of the fire.',
       onTalk: () => {
-        if (globals.manHappy) {
+        if (globals.manHappy && globals.manWarm) {
           println("Hello, my name is SAM. You aren't the first one through here recently. What can I help you with?")
-        } else {
-          println(`The homeless man remains silent, with a frown on his face. Finally, he says "Got any spare change?"`)
+        }
+        if (globals.manHappy && !globals.manWarm) {
+          println(`The homeless man remains silent, with a neutral expression on his face. Finally, he says "I'm cold."`)
+        }
+        if (!globals.manHappy && globals.manWarm) {
+          println(`The homeless man remains silent, with a neutral expression on his face. Finally, he says "Got any spare change?"`)
+        }
+        if (!globals.manHappy && !globals.manWarm) {
+          println(`The homeless man remains silent, with a frown on his face. Finally, he says "I'm cold and could use some spare change."`)
         }
       },
       topics: [],
@@ -667,10 +675,21 @@ const unblockExit = (roomId, exitId) => {
 
 const makeManHappy = () => {
   globals.manHappy = true
-  const man = getCharacter('man')
-  man.topics = man.hidden_topics
   const blanket = getItemInRoom('blanket', 'homeless_camp')
-  if (blanket) {
+  if (blanket && globals.manWarm) {
+    const man = getCharacter('man')
+    man.topics = man.hidden_topics
+    println(`The homeless MAN motions towards his BLANKET`)
+    blanket.isTakeable = true
+  }
+}
+
+const makeManWarm = () => {
+  globals.manWarm = true
+  const blanket = getItemInRoom('blanket', 'homeless_camp')
+  if (blanket && globals.manHappy) {
+    const man = getCharacter('man')
+    man.topics = man.hidden_topics
     println(`The homeless MAN motions towards his BLANKET`)
     blanket.isTakeable = true
   }
