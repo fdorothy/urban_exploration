@@ -235,6 +235,10 @@ let look = () => {
 
   if (room.items && room.items.length > 0)
     items()
+
+  if (typeof globalOnLook === 'function') {
+    globalOnLook();
+  }
 };
 
 // look in the passed way
@@ -1017,7 +1021,7 @@ let objectHasName = (obj, name) => {
 
 // get a list of all characters in the passed room
 // string -> characters
-let getCharactersInRoom = (roomId) => disk.characters.filter(c => c.roomId === roomId);
+let getCharactersInRoom = (roomId) => disk.characters.filter(c => c.roomId === roomId || c.follow);
 
 // get a character by name from a list of characters
 // string, characters -> character

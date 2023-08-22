@@ -13,3 +13,4 @@ cp game-disks/urban.js dist/game-disks/
 mkdir dist/fonts
 cp fonts/MomsTypewriter.ttf dist/fonts/
 cp -r styles dist/styles
+cp -r music dist/music

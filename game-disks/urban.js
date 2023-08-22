@@ -3,7 +3,8 @@ const globals = {
   manHappy: false,
   manWarm: false,
   fenceCompromised: false,
-  womanInCloset: true
+  womanInCloset: true,
+  womanDead: false
 }
 
 const urbanDisk = () => ({
@@ -143,7 +144,18 @@ const urbanDisk = () => ({
           name: 'knife',
           desc: 'A sharp knife',
           isHidden: true,
-          isTakeable: true
+          isTakeable: true,
+          onUse: () => {
+            if (!globals.womanInCloset && !globals.womanDead) {
+              println(`"You pull out your knife, and the woman looks at it with a frown. She grabs something from her blouse, it's a pistol!\n\nYou rush forward and stab her!\n\nIn a pool of blood on the ground, her last words are "You bastard, how did you know..."`)
+              globals.womanDead = true
+              
+              // kill the woman! remove her from the list of characters
+              disk.characters = disk.characters.filter(c => !objectHasName(c, 'woman'))
+            } else {
+              println("There is nothing to use the knife on.")
+            }
+          }
         }
       ],
       exits: [
@@ -266,8 +278,13 @@ const urbanDisk = () => ({
       music: 'music/s2.opus',
       desc: `You stand outside the barbed wire fence of the abandoned nuclear power plant. You can see the cooling tower against the night sky. To the EAST is the fence, your car is WEST and you are surrounded by woods to the NORTH and SOUTH.`,
       onLook: () => {
-        if (globals.fenceCompromised) {
-          println("The barbed wire fence is compromised, you can travel through it by typing GO EAST")
+        if (!globals.womanInCloset && !globals.womanDead) {
+          println("\n\nAs you pass through the barbed wire fence you here the sound of a gun cocking behind you.\n\nYou turn to look, but BANG you are shot before you can see who it is.")
+          enterRoom("gameover")
+        } else {
+          if (globals.fenceCompromised) {
+            println("The barbed wire fence is compromised, you can travel through it by typing GO EAST")
+          }
         }
       },
       exits: [
@@ -294,12 +311,6 @@ const urbanDisk = () => ({
             const car = getItemInRoom('car', 'dark_woods')
             if (car.isBroken) {
               println(`The car window is broken.`)
-              const boltcutters = getItemInRoom('boltcutters', 'dark_woods')
-              if (boltcutters) {
-                println('There are a pair of BOLTCUTTERS in the car.')
-                boltcutters.isTakeable = true
-                boltcutters.isHidden = false
-              }
             } else {
               println(`Maybe I can break a window with a heavy object.`)
               const boltcutters = getItemInRoom('boltcutters', 'dark_woods')
@@ -413,6 +424,12 @@ const urbanDisk = () => ({
                 if (car && !car.isBroken) {
                   println(`You break the car's window with a thick branch`)
                   car.isBroken = true
+                  const boltcutters = getItemInRoom('boltcutters', 'dark_woods')
+                  if (boltcutters) {
+                    println('There are a pair of BOLTCUTTERS in the car.')
+                    boltcutters.isTakeable = true
+                    boltcutters.isHidden = false
+                  }
                 } else {
                   println(`You've already broken the window.`)
                 }
@@ -520,7 +537,15 @@ const urbanDisk = () => ({
             case "containment":
               println("You unlock the main door to the outside. You can leave with GO WEST.")
               unblockExit('containment', 'west')
+              unblockExit('parking_lot', 'east')
               break
+            case "parking_lot":
+              println("You unlock the security office and the containment unit")
+              unblockExit('containment', 'west')
+              unblockExit('parking_lot', 'east')
+              unblockExit('security_office', 'south')
+              unblockExit('parking_lot', 'north')
+              break;
             default:
               println("You cannot use it here")
               break
@@ -544,23 +569,11 @@ const urbanDisk = () => ({
       onLook: () => {
         if (globals.womanInCloset) {
           println(`A young WOMAN is huddled in the corner of the closet, sobbing. Too traumatized to speak clearly, she says "please TAKE me with you!"`)
+          println(`The young WOMAN is now following you`)
+          globals.womanInCloset = false
+          getCharacter('woman').follow = true
         }
       },
-      items: [
-        {
-          id: 'woman',
-          name: 'Woman',
-          desc: `A young woman. She is sobbing. Too traumatized to speak clearly, she says "please we have to get out of here!"`,
-          isTakeable: true,
-          onTake: () => {
-            println(`The woman follows you. "Thank you, thank you, thank you..." she says over and over again.`)
-            globals.womanInCloset = false
-          },
-          onUse: () => {
-            println("That is incredibly inappropriate.")
-          },
-        }
-      ],
       exits: [
         { dir: 'east', id: 'utility_tunnel' }
       ],
@@ -571,6 +584,12 @@ const urbanDisk = () => ({
       img: `img/parking_lot.png`,
       music: 'music/s3.opus',
       desc: `Looks like the nuclear power plant's main parking lot. There are a few broken down cars here, their owners long gone. The night is clear with a full moon, and you can see many more stars out here than you could back in town.\n\nIt makes you feel...isolated.\n\nThe fence is back to the WEST. A river is to the SOUTH. The containment building is to the EAST and to the NORTH is a security office`,
+      onLook: () => {
+        if (!globals.womanDead && !globals.womanInCloset) {
+          println("You see the woman fumble with something in her blouse.")
+          println("You feel uncomfortable turning your back on her to leave through the fence.")
+        }
+      },
       exits: [
         { dir: 'west', id: 'outside_fence' },
         { dir: 'east', id: 'containment', block: `The door is locked with a deadbolt, I would need to USE a KEY to get in.` },
@@ -592,6 +611,20 @@ const urbanDisk = () => ({
 
 
     /**
+     * Game Over
+     */
+    {
+      id: 'gameover',
+      name: 'Game Over',
+      music: 'music/s3.opus',
+      onLook: () => {
+        img('img/finale.png')
+        println(`So sorry, but that's a game over!\n\nHit refresh to try again`)
+        disableInput()
+      }
+    },
+
+    /**
      * Finale
      */
     {
@@ -600,13 +633,7 @@ const urbanDisk = () => ({
       music: 'music/s3.opus',
       onLook: () => {
         img('img/finale.png')
-        if (!globals.womanInCloset) {
-          println(`You help the woman into the car. She appears relieved to be in a safe place.\n\n`)
-        }
-        println(`You race away from the nuclear power plant, what happened still processing in your head.\n\nWho shot the man? Where did he go?\n`)
-        if (globals.womanInCloset) {
-          println(`You wonder what that banging sound was coming from the janitor's closet in the utility tunnel. Oh well, at least you got out alive.\n`)
-        }
+        println(`You race away from the nuclear power plant, what happened still processing in your head.\n`)
         println(`Congratulations, game over!\n`)
         println(`--- CREDITS ---`)
         println(`Fredric Dorothy - Story, coding and artwork`)
@@ -642,6 +669,25 @@ const urbanDisk = () => ({
           removeOnRead: true,
           line: `"Don't you usually put them in the kitchen cabinets?"`
         }
+      ]
+    },
+    {
+      name: ['sally', 'woman', 'girl'],
+      roomId: 'closet',
+      desc: 'A woman wearing a torn red skirt and blouse. Covered in mud she must have lost her shoes a long time ago.',
+      topics: [
+        {
+          option: "**WHO** are you?",
+          line: `"My name is Sally. Please, you have to get my out of here. I've been kidnapped and he'll be back any minute!"`
+        },
+        {
+          option: "**WHERE** is the murderer?",
+          line: `"He was just here! I promise you, he was. Just please, take me out of here quickly before he gets back."`
+        },
+        {
+          option: "What is his **NAME**?",
+          line: "Uh, Jack I think..."
+        },
       ]
     },
     {
@@ -719,5 +765,15 @@ const unhideItem = (itemId, desc) => {
   if (item && item.isHidden) {
     println(desc)
     item.isHidden = false
+  }
+}
+
+const disableInput = () => {
+  input.disabled = true
+}
+
+const globalOnLook = () => {
+  if (!globals.womanInCloset && !globals.womanDead) {
+    println("The woman is right behind you.")
   }
 }
