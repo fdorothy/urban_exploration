@@ -4,7 +4,8 @@ const globals = {
   manWarm: false,
   fenceCompromised: false,
   womanInCloset: true,
-  womanDead: false
+  womanDead: false,
+  womanReleased: false
 }
 
 const knife = {
@@ -109,6 +110,7 @@ const urbanDisk = () => ({
               const utility = getRoom('utility_tunnel')
               utility.items = utility.hidden_items
               globals.goHome = true
+              globals.womanReleased = true
               unblockExit('car', 'home')
             }
           }
@@ -280,7 +282,7 @@ const urbanDisk = () => ({
       music: 'music/s2.opus',
       desc: `You stand outside the barbed wire fence of the abandoned nuclear power plant. You can see the cooling tower against the night sky. To the EAST is the fence, your car is WEST and you are surrounded by woods to the NORTH and SOUTH.`,
       onLook: () => {
-        if (!globals.womanDead && !globals.womanInCloset) {
+        if (!globals.womanDead && globals.womanReleased) {
           println("\n\nAs you pass through the barbed wire fence you here the sound of a gun cocking behind you.\n\nYou turn to look, but BANG you are shot before you can see who it is.")
           enterRoom("gameover")
         } else {
@@ -623,7 +625,6 @@ const urbanDisk = () => ({
       name: 'Game Over',
       music: 'music/s3.opus',
       onLook: () => {
-        img('img/finale.png')
         println(`So sorry, but that's a game over!\n\nHit refresh to try again`)
         disableInput()
       }
