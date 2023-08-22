@@ -7,6 +7,24 @@ const globals = {
   womanDead: false
 }
 
+const knife = {
+  name: 'knife',
+  desc: 'A sharp knife',
+  isHidden: true,
+  isTakeable: true,
+  onUse: () => {
+    if (!globals.womanInCloset && !globals.womanDead) {
+      println(`"You pull out your knife, and the woman looks at it with a frown. She grabs something from her blouse, it's a pistol!\n\nYou rush forward and stab her!\n\nIn a pool of blood on the ground, her last words are "You bastard, how did you know..."`)
+      globals.womanDead = true
+      
+      // kill the woman! remove her from the list of characters
+      disk.characters = disk.characters.filter(c => !objectHasName(c, 'woman'))
+    } else {
+      println("There is nothing to use the knife on.")
+    }
+  }
+}
+
 const urbanDisk = () => ({
   //roomId: 'introduction',
   roomId: 'introduction',
@@ -140,23 +158,7 @@ const urbanDisk = () => ({
               println("The sink smells so bad you don't want to reach into it.")
           }
         },
-        {
-          name: 'knife',
-          desc: 'A sharp knife',
-          isHidden: true,
-          isTakeable: true,
-          onUse: () => {
-            if (!globals.womanInCloset && !globals.womanDead) {
-              println(`"You pull out your knife, and the woman looks at it with a frown. She grabs something from her blouse, it's a pistol!\n\nYou rush forward and stab her!\n\nIn a pool of blood on the ground, her last words are "You bastard, how did you know..."`)
-              globals.womanDead = true
-              
-              // kill the woman! remove her from the list of characters
-              disk.characters = disk.characters.filter(c => !objectHasName(c, 'woman'))
-            } else {
-              println("There is nothing to use the knife on.")
-            }
-          }
-        }
+        {...knife},
       ],
       exits: [
         { dir: 'south', id: 'living_room' },
@@ -278,7 +280,7 @@ const urbanDisk = () => ({
       music: 'music/s2.opus',
       desc: `You stand outside the barbed wire fence of the abandoned nuclear power plant. You can see the cooling tower against the night sky. To the EAST is the fence, your car is WEST and you are surrounded by woods to the NORTH and SOUTH.`,
       onLook: () => {
-        if (!globals.womanInCloset && !globals.womanDead) {
+        if (!globals.womanDead && !globals.womanInCloset) {
           println("\n\nAs you pass through the barbed wire fence you here the sound of a gun cocking behind you.\n\nYou turn to look, but BANG you are shot before you can see who it is.")
           enterRoom("gameover")
         } else {
@@ -484,7 +486,10 @@ const urbanDisk = () => ({
       name: 'Security Office',
       img: `img/security_office.png`,
       music: 'music/s3.opus',
-      desc: `Security TVs and alarm systems sit on tables.\n\nAs you walked in you thought you saw some movement on one of the TVs, but whatever it was is now gone.\n\nThere is no one here.\n\nTo the EAST is the utility tunnel, and to the SOUTH is an exit to the parking lot.`,
+      desc: `Security TVs and alarm systems sit on tables.\n\nAs you walked in you thought you saw some movement on one of the TVs, but whatever it was is now gone.\n\nTo the EAST is the utility tunnel, and to the SOUTH is an exit to the parking lot.`,
+      items: [
+        {...knife, isHidden: false},
+      ],
       exits: [
         { dir: 'east', id: 'utility_tunnel' },
         { dir: 'south', id: 'parking_lot' }
