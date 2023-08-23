@@ -635,7 +635,6 @@ const urbanDisk = () => ({
         println(`Congratulations, game over!\n`)
         println(`--- CREDITS ---`)
         println(`Fredric Dorothy - Story, coding and artwork`)
-        println(`JimJam - Music and sound effects\n\n`)
         println(`Made for Vulcan Jam 5. Thank you for playing!`)
       }
     }
