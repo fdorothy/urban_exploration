@@ -654,18 +654,19 @@ const urbanDisk = () => ({
       topics: [
         {
           option: "What's on **TV**?",
-          removeOnRead: true,
           line: `"Just the news. Something about a missing person in the area."`
         },
         {
           option: "Where's my **CAMERA**?",
-          removeOnRead: true,
           line: `"Look around, it's in the living room somewhere."`
         },
         {
           option: "Where are my **KEYS**?",
-          removeOnRead: true,
           line: `"Don't you usually put them in the kitchen cabinets?"`
+        },
+        {
+          option: "**NUCLEAR** power plant?",
+          line: `"Don't be silly, the abandoned nuclear power plant you've been going on about all week! The one out on county road 13, surrounded by woods. Man, I wouldn't go out there, I hear there's a homeless camp near there. You're going to get shanked."`
         }
       ]
     },
@@ -710,18 +711,19 @@ const urbanDisk = () => ({
       hidden_topics: [
         {
           option: "Tell me about the **NUCLEAR** power plant",
-          removeOnRead: true,
-          line: `"The plant itself was decomissioned back in '88. From what I understand, the reactor core is still in there being constantly cooled by water from the river."`
+          line: `"The plant itself was decomissioned back in '88. From what I understand, the reactor core is still in there being constantly cooled by water from the river. There is a security guard that wanders around there, so I wouldn't recommend on going in there."`
         },
         {
           option: "WHO was here earlier?",
-          removeOnRead: true,
-          line: `"I saw a woman in the woods earlier, yessir. Not sure what they were doing."`
+          line: `"I thought I heard a car pull up, so I went out to investigate. I thought I saw a woman later jumping the fence with a blanket. Not sure what they were doing, but an abandoned nuclear power plant is no place for a young woman."`
         },
         {
-          option: "What can I do with the BLANKET?",
-          removeOnRead: true,
-          line: `"It'll keep ya warm, and it's so thick it might protect you against spiky bits. Don't worry about me, I'll stay by the fire and I've got plenty of other blankets."`
+          option: "Why are you out **HERE**?",
+          line: `"I ask the same question myself, sometimes. It's not convenient, being so far away from town and I've got to hunt my own food in the woods, but it's a way to live."`
+        },
+        {
+          option: "What can I do with the **BLANKET**?",
+          line: `"It'll keep ya warm, and it's so thick it might protect you against spiky bits. I thought I saw a woman not too long ago use it to jump the fence. Don't worry about me, I'll stay by the fire. I've got plenty of other blankets."`
         },
       ]
     },
