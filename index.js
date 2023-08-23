@@ -724,6 +724,8 @@ let commands = [
     load: x => load(x),
     restore: x => load(x),
     x: x => lookAt([null, x]), // IF standard shortcut for look at
+    examine: x => lookAt([null, x]), // IF standard shortcut for look at
+    search: x => lookAt([null, x]), // IF standard shortcut for look at
     t: x => talkToOrAboutX('to', x), // IF standard shortcut for talk
     export: exportSave,
     import: importSave, // (ignores the argument)
