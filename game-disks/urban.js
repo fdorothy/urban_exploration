@@ -636,6 +636,7 @@ const urbanDisk = () => ({
         println(`--- CREDITS ---`)
         println(`Fredric Dorothy - Story, coding and artwork`)
         println(`Made for Vulcan Jam 5. Thank you for playing!`)
+        disableInput()
       }
     }
   ],
@@ -715,7 +716,7 @@ const urbanDisk = () => ({
         {
           option: "WHO was here earlier?",
           removeOnRead: true,
-          line: `"I saw a man and a woman in the woods earlier, yessir. Not sure what they were doing."`
+          line: `"I saw a woman in the woods earlier, yessir. Not sure what they were doing."`
         },
         {
           option: "What can I do with the BLANKET?",
