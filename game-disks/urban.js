@@ -175,7 +175,7 @@ const urbanDisk = () => ({
       items: [
         {
           id: 'car',
-          name: 'Car',
+          name: 'car',
           desc: `Your beat up old car.`,
           onUse: () => {
             const keys = getItemInInventory('keys')
@@ -217,8 +217,7 @@ const urbanDisk = () => ({
       },
       items: [
         {
-          id: 'car',
-          name: 'Car',
+          name: 'car',
           desc: `Your beat up old car.`,
           onLook: () => {
             const money = getItemInRoom('money', 'car')
@@ -236,8 +235,7 @@ const urbanDisk = () => ({
           }
         },
         {
-          id: 'money',
-          name: 'Money',
+          name: 'money',
           desc: `Some spare change. One dollar and fifty cents.`,
           isTakeable: false,
           isHidden: true,
@@ -306,8 +304,7 @@ const urbanDisk = () => ({
       desc: `The woods are very dark here, and it is hard to see as you make your way through the brambles. You are surrounded by woods to the NORTH, EAST, SOUTH and WEST.`,
       items: [
         {
-          id: 'unknown_car',
-          name: 'Car',
+          name: 'car',
           desc: `A mysterious car hidden in the brush, I wonder whose this is.`,
           isBroken: false,
           isHidden: true,
@@ -358,8 +355,7 @@ const urbanDisk = () => ({
       desc: `A makeshift tent is made using shipping palettes and tarps.\n\nClothes are hanging up on a line.\n\nThere is a homeless MAN looking at you from the opposite side of a small fire. The fence is to the SOUTH. You are surrounded by woods in all other directions.`,
       items: [
         {
-          id: 'fire',
-          name: 'Fire',
+          name: 'fire',
           isLarge: false,
           onLook: () => {
             if (getItemInRoom('fire', 'homeless_camp').isLarge) {
@@ -370,8 +366,7 @@ const urbanDisk = () => ({
           }
         },
         {
-          id: 'blanket',
-          name: 'Blanket',
+          name: 'blanket',
           desc: 'A smelly old blanket, but it will keep you warm.',
           onLook: () => {
             const blanket = getItemInRoom('blanket', 'homeless_camp')
@@ -414,8 +409,7 @@ const urbanDisk = () => ({
       desc: `The trees surround you, but at least there is moonlight here.\n\nYou are lost in the forest.\n\nThere is forest in all directions. Maybe you can find your way back?`,
       items: [
         {
-          id: 'wood',
-          name: 'Wood',
+          name: 'wood',
           desc: `Some flimsy sticks and sturdier branches.`,
           isTakeable: true,
           persistOnTake: true,
@@ -520,8 +514,7 @@ const urbanDisk = () => ({
       },
       hidden_items: [
         {
-          id: 'body',
-          name: "Body",
+          name: "body",
           desc: "A BODY lays on the ground, surrounded by a pool of blood.",
           onLook: () => {
             println("It appears to be a security guard. A gunshot wound to the back.")
@@ -530,8 +523,7 @@ const urbanDisk = () => ({
           }
         },
         {
-          id: 'key',
-          name: 'Key',
+          name: 'key',
           desc: "A shiny key, looks like it goes to the doors around here.",
           isTakeable: true,
           isHidden: true,
@@ -747,9 +739,9 @@ const unblockExit = (roomId, exitId) => {
 const makeManHappy = () => {
   globals.manHappy = true
   const blanket = getItemInRoom('blanket', 'homeless_camp')
+  const man = getCharacter('homeless man')
+  man.topics = man.hidden_topics
   if (blanket && globals.manWarm) {
-    const man = getCharacter('man')
-    man.topics = man.hidden_topics
     println(`The homeless MAN motions towards his BLANKET`)
     blanket.isTakeable = true
   }
@@ -758,9 +750,9 @@ const makeManHappy = () => {
 const makeManWarm = () => {
   globals.manWarm = true
   const blanket = getItemInRoom('blanket', 'homeless_camp')
+  const man = getCharacter('homeless man')
+  man.topics = man.hidden_topics
   if (blanket && globals.manHappy) {
-    const man = getCharacter('man')
-    man.topics = man.hidden_topics
     println(`The homeless MAN motions towards his BLANKET`)
     blanket.isTakeable = true
   }
